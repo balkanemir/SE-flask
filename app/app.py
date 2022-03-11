@@ -151,3 +151,36 @@ def delete_user_details_orm(user_id):
         return json.dumps('Deleted'), HTTPStatus.OK
     except Exception as e:
         return json.dumps('Failed. ' + str(e)), HTTPStatus.NOT_FOUND        
+
+
+
+def create(post_data):
+    sql = text(
+         'INSERT INTO users (name, surname, identity_number) values (:name, :surname,      :identity_number)'
+      )
+    return execute(sql, post_data)
+"""
+The return data here is handy to retrieve meta data from the sql operation, for instance, the id of the last inserted row.
+"""
+def execute(sql, data):
+     return db.engine.execute(sql, data)
+
+"""
+Returns data in a json format
+"""
+def return_message(message):
+    return json.dumps(message), HTTPStatus.OK        
+
+
+def post_user_details():
+   try:
+       # Get the details from the request object as usual
+       data = request.get_json()
+       # Call the create function, passing it the data from the request object
+       # This object return an object, but we don't need to use it here
+       create(data)
+       # Return the message 'Added'
+       return return_message('Added')
+   except Exception as e:
+       return json.dumps('Failed. ' + str(e)), HTTPStatus.NOT_FOUND
+
